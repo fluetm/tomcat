@@ -39,7 +39,7 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
     private String baseUrlString;
 
     private JarFile archive = null;
-    protected HashMap<String,JarEntry> archiveEntries = null;
+    protected volatile HashMap<String,JarEntry> archiveEntries = null;
     protected final Object archiveLock = new Object();
     private long archiveUseCount = 0;
 
