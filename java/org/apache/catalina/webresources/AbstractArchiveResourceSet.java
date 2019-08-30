@@ -341,6 +341,8 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
 
     @Override
     public void gc() {
+        // MJF TODO: this gets invoked by StandardRoot.gc() which is fired by the backgroundProcess loop seemingly on every request...doesn't appear to check any reloadable configuration from the Context
+        /*
         synchronized (archiveLock) {
             if (archive != null && archiveUseCount == 0) {
                 try {
@@ -349,8 +351,11 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
                     // Log at least WARN
                 }
                 archive = null;
+                System.out.println("MJF 5 ---> AbstractArchiveResourceSet (" + this.getClass().getName() +") id=" + hashCode() + " GC setting archiveEntries to null for: " + baseUrlString);
+                Thread.dumpStack();
                 archiveEntries = null;
             }
         }
+        */
     }
 }

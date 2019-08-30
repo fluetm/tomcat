@@ -108,6 +108,7 @@ public class JarWarResourceSet extends AbstractArchiveResourceSet {
                 try {
                     warFile = openJarFile();
                     JarEntry jarFileInWar = warFile.getJarEntry(archivePath);
+                    System.out.println("MJF 5 ---> JarWarResourceSet loading archive entries from jar: " + jarFileInWar.getName());
                     jarFileIs = warFile.getInputStream(jarFileInWar);
 
                     try (TomcatJarInputStream jarIs = new TomcatJarInputStream(jarFileIs)) {

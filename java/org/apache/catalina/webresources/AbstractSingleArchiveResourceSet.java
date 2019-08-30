@@ -69,12 +69,15 @@ public abstract class AbstractSingleArchiveResourceSet extends AbstractArchiveRe
                 archiveEntries = new HashMap<>();
                 try {
                     jarFile = openJarFile();
+                    System.out.println("MJF 5 ---> AbstractSingleArchiveResourceSet (" + this.getClass().getName() + ") id="+ hashCode() +" loading archive entries from jar: " + jarFile.getName());
                     Enumeration<JarEntry> entries = jarFile.entries();
                     while (entries.hasMoreElements()) {
                         JarEntry entry = entries.nextElement();
                         archiveEntries.put(entry.getName(), entry);
                     }
                 } catch (IOException ioe) {
+                    System.out.println("MJF 5 ---> AbstractSingleArchiveResourceSet (" + this.getClass().getName() +
+                        ") EXECPTION CAUGHT SETTING archiveEntries = null");
                     // Should never happen
                     archiveEntries = null;
                     throw new IllegalStateException(ioe);
