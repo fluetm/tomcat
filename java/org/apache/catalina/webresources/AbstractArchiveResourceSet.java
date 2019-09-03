@@ -270,9 +270,9 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
                     // Calls JarFile.getJarEntry() which is multi-release aware
                     jarEntry = getArchiveEntry(pathInJar);
                 } else {
-                    // Cache the jar entries after first read (single=false)...speeds up startup for
+                    // Cache the jar entries after first read if not reloadable...speeds up startup for
                     // applications with a heavyweight classpath and significant up-front resource loading
-                    Map<String,JarEntry> jarEntries = getArchiveEntries(false);
+                    Map<String,JarEntry> jarEntries = getArchiveEntries(root.getContext().getReloadable());
                     if (!(pathInJar.charAt(pathInJar.length() - 1) == '/')) {
                         if (jarEntries == null) {
                             jarEntry = getArchiveEntry(pathInJar + '/');
@@ -341,15 +341,19 @@ public abstract class AbstractArchiveResourceSet extends AbstractResourceSet {
 
     @Override
     public void gc() {
-        synchronized (archiveLock) {
-            if (archive != null && archiveUseCount == 0) {
-                try {
-                    archive.close();
-                } catch (IOException e) {
-                    // Log at least WARN
+        // MJF: If not reloadable, then archiveEntries will not change and need not be refreshed
+        if (getRoot().getContext().getReloadable()) {
+            System.out.println("MJF 6 ---> AbstractArchiveResourceSet (" + this.getClass().getName() +") id=" + hashCode() + " GC setting archiveEntries to null for: " + baseUrlString);
+            synchronized (archiveLock) {
+                if (archive != null && archiveUseCount == 0) {
+                    try {
+                        archive.close();
+                    } catch (IOException e) {
+                        // Log at least WARN
+                    }
+                    archive = null;
+                    archiveEntries = null;
                 }
-                archive = null;
-                archiveEntries = null;
             }
         }
     }

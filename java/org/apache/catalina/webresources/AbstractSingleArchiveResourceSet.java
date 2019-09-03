@@ -69,6 +69,7 @@ public abstract class AbstractSingleArchiveResourceSet extends AbstractArchiveRe
                 archiveEntries = new HashMap<>();
                 try {
                     jarFile = openJarFile();
+                    System.out.println("MJF 6 ---> AbstractSingleArchiveResourceSet (" + this.getClass().getName() + ") id="+ hashCode() +" loading archive entries from jar: " + jarFile.getName());
                     Enumeration<JarEntry> entries = jarFile.entries();
                     while (entries.hasMoreElements()) {
                         JarEntry entry = entries.nextElement();
