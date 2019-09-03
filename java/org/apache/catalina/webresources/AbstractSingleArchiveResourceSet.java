@@ -60,33 +60,37 @@ public abstract class AbstractSingleArchiveResourceSet extends AbstractArchiveRe
         }
     }
 
+    private HashMap<String, JarEntry> loadArchiveEntries() throws IOException {
+        JarFile jarFile = null;
+        try {
+            HashMap<String,JarEntry> contents = new HashMap<>();
+            jarFile = openJarFile();
+            System.out.println("MJF 6 ---> AbstractSingleArchiveResourceSet (" + this.getClass().getName() + ") loading archive entries from jar: " + jarFile.getName());
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                contents.put(entry.getName(), entry);
+            }
+            return contents;
+        } finally {
+            if (jarFile != null) {
+                closeJarFile();
+            }
+        }
+    }
 
     @Override
     protected HashMap<String,JarEntry> getArchiveEntries(boolean single) {
-        synchronized (archiveLock) {
-            if (archiveEntries == null && !single) {
-                JarFile jarFile = null;
-                archiveEntries = new HashMap<>();
-                try {
-                    jarFile = openJarFile();
-                    System.out.println("MJF 6 ---> AbstractSingleArchiveResourceSet (" + this.getClass().getName() + ") id="+ hashCode() +" loading archive entries from jar: " + jarFile.getName());
-                    Enumeration<JarEntry> entries = jarFile.entries();
-                    while (entries.hasMoreElements()) {
-                        JarEntry entry = entries.nextElement();
-                        archiveEntries.put(entry.getName(), entry);
-                    }
-                } catch (IOException ioe) {
-                    // Should never happen
-                    archiveEntries = null;
-                    throw new IllegalStateException(ioe);
-                } finally {
-                    if (jarFile != null) {
-                        closeJarFile();
-                    }
-                }
+        if (archiveEntries == null && !single) {
+            try {
+                archiveEntries = loadArchiveEntries();
+            } catch (IOException ioe) {
+                // Should never happen
+                archiveEntries = null;
+                throw new IllegalStateException(ioe);
             }
-            return archiveEntries;
         }
+        return archiveEntries;
     }
 
 
